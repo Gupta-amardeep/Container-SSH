@@ -16,9 +16,8 @@ sudo service ssh start or systemctl enable sshd
 docker commit master ssh
 docker images
 
-# Now create two or three conatiner using this ssh image
+# Now create slave1 conatiner using this ssh image
 docker run -dit --name slave1 --network test -p 22 ssh
-docker run -dit --name slave2 --network test -p 22 ssh
 
 Note:- Make sure the ssh service is running on these conatiners
 
@@ -28,7 +27,7 @@ ssh-keygen
 
 #the publlic key will be stored at /root/.ssh/id_rsa.pub
 
-# Now on remaining slave1,2 container
+# Now on remaining slave1 container
 docker exec -it slave1 bash
 mkdir ~./ssh
 
@@ -39,6 +38,13 @@ vi authorized_keys
 docker exec -it master bash
 ssh -p 22 slave1
 ssh -p 22 root@slave1
+
+# Now commit this slave1 conatiner so that we can make more conatiner out of it
+docker commit slave1 ssh-enable
+
+# Now make other slave container from it that already having authorized keys from master
+docker run -dit --name slave2 --network test -p 22 ssh-enable
+docker run -dit --name slave2 --network test -p 22 ssh-enable
 
 
 
