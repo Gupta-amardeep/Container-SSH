@@ -1,0 +1,44 @@
+# Install and docker machine
+
+# Setup a test network using driver=bridge
+docker network create --driver=bridge test
+
+# Run the master container as:-
+docker run -dit --name master --network test -p 22 ubuntu
+
+# Install the openssh server on all conatiners to enable ssh bw them.
+docker exec -it master bash
+sudo apt update
+sudo apt install openssh-server -y
+sudo service ssh start or systemctl enable sshd
+
+# Commit this image to be used as ready made install open ssh server image
+docker commit master ssh
+docker images
+
+# Now create two or three conatiner using this ssh image
+docker run -dit --name slave1 --network test -p 22 ssh
+docker run -dit --name slave2 --network test -p 22 ssh
+
+Note:- Make sure the ssh service is running on these conatiners
+
+#ssh-keygen on master container
+docker exec -it master bash
+ssh-keygen
+
+#the publlic key will be stored at /root/.ssh/id_rsa.pub
+
+# Now on remaining slave1,2 container
+docker exec -it slave1 bash
+mkdir ~./ssh
+
+#paste the public key in authorized_keys file
+vi authorized_keys
+
+#now try ssh -p 22 root@<name> from master conatiner
+docker exec -it master bash
+ssh -p 22 slave1
+ssh -p 22 root@slave1
+
+
+
