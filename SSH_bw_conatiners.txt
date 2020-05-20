@@ -26,7 +26,8 @@ docker exec -it master bash
 ssh-keygen
 
 #the publlic key will be stored at /root/.ssh/id_rsa.pub
-
+ssh-copy-id -i ~/.ssh/mykey user@host
+            OR
 # Now on remaining slave1 container
 docker exec -it slave1 bash
 mkdir ~./ssh
